@@ -282,6 +282,7 @@ public class TransitionService {
             //{PlaceAndDate=pdrec, MaxMinTemp=mmtre, InDataFault=errmes} dataAndType Map序列
             Set complexTypeSet = dataAndType.keySet();
             Iterator keySetIt = complexTypeSet.iterator();
+            //进行双重循环，围绕每一个key值进行迭代，构造公理
             while (keySetIt.hasNext()) {
                 Iterator tempIt = complexTypeSet.iterator();
                 keyNext = (String) keySetIt.next();
