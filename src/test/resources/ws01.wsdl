@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions>
+<types>
+    <schema>
+        <element name = "PlaceAndDate" type = "pdrec" />
+        <element name = "MaxMinTemp"    type = "mmtre" />
+        <element name = "InDataFault"   type = "errmes" />
+
+        <complexType name = "pdrec">
+        <sequence>
+            <element name = "town" type = "xs:string"/>
+            <element name = "country" type = "xs:string"/>
+            <element name = "day" type = "xs:date" />
+        </sequence>
+       </complexType>
+
+        <complexType name="mmtre">
+            <sequence>
+                <element name="maxtemperature" type="xs:string"/>
+                <element name="mintemperature" type="xs:string"/>
+            </sequence>
+        </complexType>
+
+        <complexType name="errmess">
+            <sequence>
+                <element name="errormessage" type="xs:string"/>
+            </sequence>
+        </complexType>
+
+    </schema>
+</types>
+
+    <message name="PlaceAndDateSoapIn">
+        <part name="parameters" element="PlaceAndDate"/>
+    </message>
+    <message name="MaxMinTemSoapOut">
+        <part name="parameters" element="MaxMinTem"/>
+    </message>
+    <message name="InDataFault">
+        <part name="parameters" element="InDataFaul"/>
+    </message>
+
+<portType name = "weatherInfo" >
+<operation name = "getMaxMinTemps" pattern ="wsdlns: in-out">
+    <input messageLabel = "In" element= "weathns:PlaceAndDate" />
+    <output messageLabel = "Out" element ="weathns:MaxMinTemp" />
+    <outfault messageLabel = "Out" element ="weathns:InDataFault" />
+</operation>
+</portType>
+
+<service name="WeatherWS">
+<port name="">
+    <address location=""></address>
+</port>
+</service>
+</definitions>

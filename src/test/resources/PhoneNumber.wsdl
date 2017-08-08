@@ -1,0 +1,208 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/"
+                  targetNamespace="http://WebXml.com.cn/"
+                  xmlns:http="http://schemas.xmlsoap.org/wsdl/http/"
+                  xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/"
+                  xmlns:s="http://www.w3.org/2001/XMLSchema"
+                  xmlns:tns="http://WebXml.com.cn/"
+                  xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/"
+                  xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/">
+    <wsdl:types>
+        <s:schema targetNamespace="http://WebXml.com.cn/" elementFormDefault="qualified">
+            <s:element name="getMobileCodeInfo">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element name="mobileCode" type="s:string" maxOccurs="1" minOccurs="0"/>
+                        <s:element name="userID" type="s:string" maxOccurs="1" minOccurs="0"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="getMobileCodeInfoResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element name="getMobileCodeInfoResult" type="s:string" maxOccurs="1" minOccurs="0"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:element name="getDatabaseInfo">
+                <s:complexType/>
+            </s:element>
+            <s:element name="getDatabaseInfoResponse">
+                <s:complexType>
+                    <s:sequence>
+                        <s:element name="getDatabaseInfoResult" type="tns:ArrayOfString" maxOccurs="1" minOccurs="0"/>
+                    </s:sequence>
+                </s:complexType>
+            </s:element>
+            <s:complexType name="ArrayOfString">
+                <s:sequence>
+                    <s:element name="string" type="s:string" maxOccurs="unbounded" minOccurs="0" nillable="true"/>
+                </s:sequence>
+            </s:complexType>
+            <s:element name="string" type="s:string" nillable="true"/>
+            <s:element name="ArrayOfString" type="tns:ArrayOfString" nillable="true"/>
+        </s:schema>
+    </wsdl:types>
+    <wsdl:message name="getMobileCodeInfoSoapIn">
+        <wsdl:part name="parameters" element="tns:getMobileCodeInfo"/>
+    </wsdl:message>
+    <wsdl:message name="getMobileCodeInfoSoapOut">
+        <wsdl:part name="parameters" element="tns:getMobileCodeInfoResponse"/>
+    </wsdl:message>
+    <wsdl:message name="getDatabaseInfoSoapIn">
+        <wsdl:part name="parameters" element="tns:getDatabaseInfo"/>
+    </wsdl:message>
+    <wsdl:message name="getDatabaseInfoSoapOut">
+        <wsdl:part name="parameters" element="tns:getDatabaseInfoResponse"/>
+    </wsdl:message>
+    <wsdl:message name="getMobileCodeInfoHttpGetIn">
+        <wsdl:part name="mobileCode" type="s:string"/>
+        <wsdl:part name="userID" type="s:string"/>
+    </wsdl:message>
+    <wsdl:message name="getMobileCodeInfoHttpGetOut">
+        <wsdl:part name="Body" element="tns:string"/>
+    </wsdl:message>
+    <wsdl:message name="getDatabaseInfoHttpGetIn"/>
+    <wsdl:message name="getDatabaseInfoHttpGetOut">
+        <wsdl:part name="Body" element="tns:ArrayOfString"/>
+    </wsdl:message>
+    <wsdl:message name="getMobileCodeInfoHttpPostIn">
+        <wsdl:part name="mobileCode" type="s:string"/>
+        <wsdl:part name="userID" type="s:string"/>
+    </wsdl:message>
+    <wsdl:message name="getMobileCodeInfoHttpPostOut">
+        <wsdl:part name="Body" element="tns:string"/>
+    </wsdl:message>
+    <wsdl:message name="getDatabaseInfoHttpPostIn"/>
+    <wsdl:message name="getDatabaseInfoHttpPostOut">
+        <wsdl:part name="Body" element="tns:ArrayOfString"/>
+    </wsdl:message>
+    <wsdl:portType name="MobileCodeWSSoap">
+        <wsdl:operation name="getMobileCodeInfo">
+            <wsdl:input message="tns:getMobileCodeInfoSoapIn"/>
+            <wsdl:output message="tns:getMobileCodeInfoSoapOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="getDatabaseInfo">
+            <wsdl:input message="tns:getDatabaseInfoSoapIn"/>
+            <wsdl:output message="tns:getDatabaseInfoSoapOut"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="MobileCodeWSHttpGet">
+        <wsdl:operation name="getMobileCodeInfo">
+            <wsdl:input message="tns:getMobileCodeInfoHttpGetIn"/>
+            <wsdl:output message="tns:getMobileCodeInfoHttpGetOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="getDatabaseInfo">
+            <wsdl:input message="tns:getDatabaseInfoHttpGetIn"/>
+            <wsdl:output message="tns:getDatabaseInfoHttpGetOut"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:portType name="MobileCodeWSHttpPost">
+        <wsdl:operation name="getMobileCodeInfo">
+            <wsdl:input message="tns:getMobileCodeInfoHttpPostIn"/>
+            <wsdl:output message="tns:getMobileCodeInfoHttpPostOut"/>
+        </wsdl:operation>
+        <wsdl:operation name="getDatabaseInfo">
+            <wsdl:input message="tns:getDatabaseInfoHttpPostIn"/>
+            <wsdl:output message="tns:getDatabaseInfoHttpPostOut"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="MobileCodeWSSoap" type="tns:MobileCodeWSSoap">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="getMobileCodeInfo">
+            <soap:operation style="document" soapAction="http://WebXml.com.cn/getMobileCodeInfo"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getDatabaseInfo">
+            <soap:operation style="document" soapAction="http://WebXml.com.cn/getDatabaseInfo"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="MobileCodeWSSoap12" type="tns:MobileCodeWSSoap">
+        <soap12:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="getMobileCodeInfo">
+            <soap12:operation style="document" soapAction="http://WebXml.com.cn/getMobileCodeInfo"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getDatabaseInfo">
+            <soap12:operation style="document" soapAction="http://WebXml.com.cn/getDatabaseInfo"/>
+            <wsdl:input>
+                <soap12:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap12:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="MobileCodeWSHttpGet" type="tns:MobileCodeWSHttpGet">
+        <http:binding verb="GET"/>
+        <wsdl:operation name="getMobileCodeInfo">
+            <http:operation location="/getMobileCodeInfo"/>
+            <wsdl:input>
+                <http:urlEncoded/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:mimeXml part="Body"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getDatabaseInfo">
+            <http:operation location="/getDatabaseInfo"/>
+            <wsdl:input>
+                <http:urlEncoded/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:mimeXml part="Body"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:binding name="MobileCodeWSHttpPost" type="tns:MobileCodeWSHttpPost">
+        <http:binding verb="POST"/>
+        <wsdl:operation name="getMobileCodeInfo">
+            <http:operation location="/getMobileCodeInfo"/>
+            <wsdl:input>
+                <mime:content type="application/x-www-form-urlencoded"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:mimeXml part="Body"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="getDatabaseInfo">
+            <http:operation location="/getDatabaseInfo"/>
+            <wsdl:input>
+                <mime:content type="application/x-www-form-urlencoded"/>
+            </wsdl:input>
+            <wsdl:output>
+                <mime:mimeXml part="Body"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="MobileCodeWS">
+        <wsdl:port name="MobileCodeWSSoap" binding="tns:MobileCodeWSSoap">
+            <soap:address location="http://ws.webxml.com.cn/WebServices/MobileCodeWS.asmx"/>
+        </wsdl:port>
+        <wsdl:port name="MobileCodeWSSoap12" binding="tns:MobileCodeWSSoap12">
+            <soap12:address location="http://ws.webxml.com.cn/WebServices/MobileCodeWS.asmx"/>
+        </wsdl:port>
+        <wsdl:port name="MobileCodeWSHttpGet" binding="tns:MobileCodeWSHttpGet">
+            <http:address location="http://ws.webxml.com.cn/WebServices/MobileCodeWS.asmx"/>
+        </wsdl:port>
+        <wsdl:port name="MobileCodeWSHttpPost" binding="tns:MobileCodeWSHttpPost">
+            <http:address location="http://ws.webxml.com.cn/WebServices/MobileCodeWS.asmx"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>
