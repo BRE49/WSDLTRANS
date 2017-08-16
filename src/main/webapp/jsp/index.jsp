@@ -34,6 +34,25 @@
 
 <div id="center" data-options="region:'center',title:'RADL-WS',disabled:true" style="padding:5px;">
 </div>
+
+<script type="text/javascript">
+
+    $("#transition").click(function () {
+        var wsdl = $("#wsdl").val();
+        var url = "/trans";
+        var radl = $("#center");
+        var sendData = {'wsdl':wsdl};
+        $.post(url,sendData,function (backInfo) {
+            radl.text("");
+            radl.append(backInfo.content);
+        })
+
+    });
+
+    $("#ruleCheck").click(function () {
+        alert("hello");
+    });
+</script>
 </body>
 
 </html>
