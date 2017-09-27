@@ -25,17 +25,39 @@
      data-options="region:'west',title:'WSDL',split:true,disabled:true,collapsible:false"
      style="width:700px;">
     &nbsp; &nbsp;
-    <a id="ruleCheck" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'">规则检查</a>
+    <a id="clearWsdl" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-clear'">清空WSDL</a>
+    &nbsp; &nbsp;
+    <a id="ruleCheck" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'">语法检查</a>
     &nbsp; &nbsp;
     <a id="transition" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-reload'">进行转换</a>
-    <input id="wsdl" type="text" multiline="true" class="easyui-textbox" style="width:100%;height:590px;">
+    &nbsp; &nbsp;
+    <a id="save" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-save'">保存Radl-WS</a>
 
+    &nbsp; &nbsp;
+    <input id="chooseWSDL" class="easyui-filebox" style="width:150px" data-options="buttonText:'选择WSDL文件'">
+    &nbsp; &nbsp;
+    <a id="openWSDL" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'">打开文件</a>
+    <input id="wsdl" type="text" multiline="true" class="easyui-textbox" style="width:100%;height:590px;">
 </div>
 
 <div id="center" data-options="region:'center',title:'RADL-WS',disabled:true" style="padding:5px;">
 </div>
 
 <script type="text/javascript">
+
+
+    $("#clearWsdl").click(function () {
+        $("#wsdl").textbox("setValue","");
+    });
+
+    $("#openWSDL").click(function () {
+        var filePath = $("#chooseWSDL").filebox('getValue');
+        var url = "/open?filePath="+filePath;
+        $.get(url,function (result) {
+            var wsdl = result.data;
+            $("#wsdl").textbox("setValue",wsdl);
+        });
+    });
 
     $("#transition").click(function () {
         var wsdl = $("#wsdl").val();
@@ -44,13 +66,12 @@
         var sendData = {'wsdl':wsdl};
         $.post(url,sendData,function (backInfo) {
             radl.text("");
-            radl.append(backInfo.content);
+            radl.append(backInfo.data);
         })
-
     });
 
     $("#ruleCheck").click(function () {
-        alert("hello");
+        alert('ruleCheck ok');
     });
 </script>
 </body>

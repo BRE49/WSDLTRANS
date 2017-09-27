@@ -1,6 +1,9 @@
 package kent.service;
 
+import kent.model.JsonResult;
+import kent.model.SuccessResult;
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.Element;
 import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
@@ -8,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.*;
 
 @Service
@@ -19,12 +23,11 @@ public class TransitionServiceOnWeb {
     //数据名称及其复杂类型映射
     private Map<String,String> dataAndType = new LinkedHashMap<>();
     //存储端口类型名
-    private String portTypeName = new String();
+    private String portTypeName = "";
 
     //输入一个String类型的xml文件
-    public StringBuilder trans(String inputWsdl){
-        StringBuilder text = new StringBuilder();
-        try {
+    public JsonResult trans(String inputWsdl) throws UnsupportedEncodingException,DocumentException{
+            StringBuilder text = new StringBuilder();
             SAXReader saxReader = new SAXReader();
             //将String类型转换为InputStream类型
             InputStream wsdlStream = new ByteArrayInputStream(inputWsdl.getBytes("UTF-8"));
@@ -34,11 +37,9 @@ public class TransitionServiceOnWeb {
             text.append(getSpecMain(root,document));
             text.append(getAxioms());
             //System.out.println(text);
-            return text;
-        }catch (Exception e){
-            e.printStackTrace();
-            throw new RuntimeException();
-        }
+            SuccessResult result = new SuccessResult();
+            result.setData(text.toString());
+            return result;
     }
 
     //去掉前缀 如 xs：string
@@ -133,7 +134,7 @@ public class TransitionServiceOnWeb {
         //operation tag
         StringBuilder inS = new StringBuilder();
         StringBuilder outS = new StringBuilder();
-        try{
+
             // 提取第一层的所有节点 只有标签节点definition
             Iterator it = doc.nodeIterator();
             while (it.hasNext()){
@@ -215,11 +216,7 @@ public class TransitionServiceOnWeb {
             inS.append(" -> ");
             outS.deleteCharAt(outS.length()-1);
             ob.append(inS).append(outS).append("<br/>");
-        }
-        catch (Exception e){
-            e.printStackTrace();
-            throw new RuntimeException();
-        }
+
         specMain.append(trans).append(ob);
 
 
@@ -244,15 +241,15 @@ public class TransitionServiceOnWeb {
         // get var list
         for(String varl : varList){
             temp = varl.substring(0,varl.length()/2+1);
-            varString.append(temp+": "+varl+"; ");
+            varString.append(temp).append(":").append(varl).append("; ");
         }
 
 
         //生成公理说明主体部分
         String subPortTypeName = portTypeName.substring(0,portTypeName.length()/2+1);
         //用于保存临时key\value值
-        String keyNext = new String();
-        String valueNext = new String();
+        String keyNext;
+        String valueNext;
         //{PlaceAndDate=pdrec, MaxMinTemp=mmtre, InDataFault=errmes} dataAndType Map序列
         Set complexTypeSet = dataAndType.keySet();
         Iterator keySetIt = complexTypeSet.iterator();

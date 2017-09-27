@@ -10,8 +10,15 @@
     http://www.springframework.org/schema/mvc
     http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd">
 
-    <!-- Definition for Controller scan-->
+    <!-- Definition for Service scan-->
     <context:component-scan base-package="kent.service"/>
+    <context:component-scan base-package="kent.action"/>
+
+    <!-- Exception Handler -->
+    <context:component-scan base-package="kent" use-default-filters="false">
+        <context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.RestController"/>
+        <context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.RestControllerAdvice"/>
+    </context:component-scan>
 
     <!-- Standard xml based mvc config-->
     <mvc:annotation-driven>

@@ -6,6 +6,7 @@ import org.dom4j.io.SAXReader;
 import org.junit.Test;
 
 import java.io.File;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 public class test1 {
@@ -123,5 +124,16 @@ public class test1 {
                 System.out.println(b);
             }
         }
+    }
+
+    @Test
+    public void testCal(){
+        Calendar calendar = Calendar.getInstance();
+        Date date = calendar.getTime();
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("MM");
+        String month = simpleDateFormat.format(date);
+        Integer m = Integer.parseInt(month);
+        System.out.println(m);
+        System.out.println(calendar.get(Calendar.MONTH)+1);
     }
 }

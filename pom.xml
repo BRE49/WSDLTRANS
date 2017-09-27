@@ -53,31 +53,7 @@
 
         <dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-tx</artifactId>
-            <version>${org.springframework.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-jdbc</artifactId>
-            <version>${org.springframework.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-test</artifactId>
-            <version>${org.springframework.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
             <artifactId>spring-expression</artifactId>
-            <version>${org.springframework.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-orm</artifactId>
             <version>${org.springframework.version}</version>
         </dependency>
 
@@ -138,6 +114,14 @@
             <version>1.2</version>
         </dependency>
 
+        <!-- 日志 -->
+        <dependency>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
+            <version>1.2.17</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>
@@ -149,7 +133,7 @@
                     <version>9.4.0.RC2</version>
                     <configuration>
                         <httpConnector>
-                            <port>8080</port>
+                            <port>8081</port>
                         </httpConnector>
                     </configuration>
                 </plugin>
