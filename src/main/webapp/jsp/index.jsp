@@ -29,11 +29,11 @@
     &nbsp; &nbsp;
     <a id="openWSDL" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'">打开文件</a>
     &nbsp; &nbsp;
-    <a id="clearWsdl" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-clear'">清空WSDL</a>
-    &nbsp; &nbsp;
     <a id="ruleCheck" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'">语法检查</a>
     &nbsp; &nbsp;
     <a id="transition" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-reload'">进行转换</a>
+    &nbsp; &nbsp;
+    <a id="clearWsdl" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-clear'">清空WSDL</a>
     <input id="wsdl" type="text" multiline="true" class="easyui-textbox" style="width:100%;height:500px;">
 </div>
 
