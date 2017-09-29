@@ -16,8 +16,8 @@ public class RestExceptionHandler {
 
     private Logger logger = Logger.getLogger(RestExceptionHandler.class);
 
-    @ExceptionHandler
-    public JsonResult nullPointer(NullPointerException n){
+    @ExceptionHandler(Exception.class)
+    public JsonResult nullPointer(Exception n){
         String errMsg = n.getMessage();
         logger.error(errMsg);
         return  new ErrorResult(errMsg);

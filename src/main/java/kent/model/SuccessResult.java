@@ -6,8 +6,12 @@ package kent.model;
  */
 public class SuccessResult extends JsonResult {
 
+
+
     public SuccessResult() {
         this.setCode(JsonResult.CODE_SUCCESS);
         this.setInfo(JsonResult.INFO_SUCCESS);
     }
+
+
 }

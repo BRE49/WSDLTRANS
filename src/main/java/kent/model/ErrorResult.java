@@ -8,10 +8,6 @@ public class ErrorResult extends JsonResult {
 
     public ErrorResult(String errorInfo) {
         this.setCode(JsonResult.CODE_ERROR);
-        if(this.getInfo() == null){
-            this.setInfo(JsonResult.INFO_ERROR);
-        }else {
-            this.setInfo(errorInfo);
-        }
+        this.setInfo(errorInfo);
     }
 }

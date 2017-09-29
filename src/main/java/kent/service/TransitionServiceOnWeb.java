@@ -260,7 +260,7 @@ public class TransitionServiceOnWeb {
             valueNext = dataAndType.get(keyNext);
             while (tempIt.hasNext()) {
                 String tempKey = (String)tempIt.next();
-                axiomsMain.append(subPortTypeName + ".set_ " + keyNext + " (" + valueNext + ").get_" + "<br/>");
+                axiomsMain.append(subPortTypeName + ".set_ " + keyNext + " (" + valueNext + ").get_");
                 if(tempKey.equals(keyNext)) {
                     axiomsMain.append(keyNext + " ="  + valueNext + "<br/>");
                 }else {

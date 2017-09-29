@@ -37,8 +37,9 @@ public class JsonResult {
         return info;
     }
 
-    public void setInfo(String info) {
+    public JsonResult setInfo(String info) {
         this.info = info;
+        return this;
     }
 
     public Object getData() {

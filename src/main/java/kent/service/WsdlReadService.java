@@ -26,7 +26,7 @@ public class WsdlReadService{
 
         File file = new File(filePath);
         if(!file.exists()) {
-            return new ErrorResult("file nor exist");
+            return new ErrorResult("file not exist");
         }else if (!file.canRead()){
             return new ErrorResult("file can not read");
         }
@@ -38,6 +38,7 @@ public class WsdlReadService{
         StringBuilder wsdl = new StringBuilder();
         while ((wsdlTemp = bufferedReader.readLine()) != null){
             wsdl.append(wsdlTemp);
+            wsdl.append("\n");
         }
         bufferedReader.close();
 
