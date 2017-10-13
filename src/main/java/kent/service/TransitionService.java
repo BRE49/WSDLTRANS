@@ -15,13 +15,13 @@ import java.util.*;
 public class TransitionService {
 
     //读取wsdl文件
-    File wsdl = new File(this.getClass().getClassLoader().getResource("ws01.wsdl").getFile());
+    private File wsdl = new File(this.getClass().getClassLoader().getResource("common.wsdl").getFile());
     //公理生成部分的变量列表
-    List<String> varList = new ArrayList<>();
+    private List<String> varList = new ArrayList<>();
     //数据名称及其复杂类型映射
-    Map<String,String> dataAndType = new LinkedHashMap<>();
+    private Map<String,String> dataAndType = new LinkedHashMap<>();
     //存储端口类型名
-    String portTypeName = new String();
+    private String portTypeName;
 
     @Test
     public void transition() throws Exception{
@@ -86,7 +86,11 @@ public class TransitionService {
     private StringBuilder getComplexType(Element root){
         StringBuilder typeBuilder = new StringBuilder();
         List<?> list = root.selectNodes("//types//complexType");
+        if(list.size() == 0){
+            root.addNamespace("xs","http://www.w3.org/2001/XMLSchema");
+            list = root.selectNodes("//wsdl:types//xs:complexType");
 
+        }
         for (Object aList : list) {
 
             Element element = (Element) aList;
@@ -115,7 +119,7 @@ public class TransitionService {
                 }
             }
         }
-        typeBuilder.append("end").append("\n");
+        typeBuilder.append("end").append("\n").append("\n");
         return typeBuilder;
     }
 
@@ -135,6 +139,11 @@ public class TransitionService {
         //set complexTypeName to imports list
         specMain.append("imports: ");
         List list = root.selectNodes("//types//complexType");
+        if(list.size() == 0){
+            root.addNamespace("xs","http://www.w3.org/2001/XMLSchema");
+            list = root.selectNodes("//wsdl:types//xs:complexType");
+
+        }
         int i = 1;
         varList.add("message");
         for (Object aList : list){
@@ -146,9 +155,12 @@ public class TransitionService {
         }
         //set messageName to imports list
         List list1 =  root.selectNodes("//message");
+        if(list1.size() == 0) list1 = root.selectNodes("//wsdl:message");
         for (Object bList : list1){
             Element element = (Element)bList;
             String messageName = element.attributeValue("name");
+            //拿到import列表 防止重复添加
+            if(Arrays.asList(specMain.toString().split(":")[1].substring(1).split(",")).contains(messageName)) continue;
             specMain.append(messageName).append(",");
         }
         //delete the last ,
@@ -173,7 +185,7 @@ public class TransitionService {
                     //找出type标签节点
                     if(typeNode instanceof Element){
                         String typeName = typeNode.getName();
-                        if(typeName.equals("types")){
+                        if(Objects.equals(typeName,"types")){
                             Element typeElement = (Element)typeNode;
                             //提取types的子节点 只有标签节点schema
                             Iterator eleIt = typeElement.nodeIterator();
@@ -192,6 +204,10 @@ public class TransitionService {
                                             if(tagName.equals("element")){
                                                 String eleNameAttr = elementTag.attributeValue("name");
                                                 String eleTypeAttr = elementTag.attributeValue("type");
+
+                                                //remove prefix
+                                                eleNameAttr = this.spiltPrefix(eleNameAttr);
+                                                eleTypeAttr = this.spiltPrefix(eleTypeAttr);
                                                 dataAndType.put(eleNameAttr,eleTypeAttr);
                                                 trans.append("set_ ").append(eleNameAttr)
                                                         .append(": ").append(eleTypeAttr)
@@ -217,17 +233,26 @@ public class TransitionService {
                                     //提取操作名 getMaxMinTemps
                                     String operationName = operationElement.attributeValue("name");
                                     ob.append(operationName).append(": ");
-                                    Iterator inOutIt = operationElement.nodeIterator();
+                                    Iterator<Node> inOutIt = operationElement.nodeIterator();
                                     while (inOutIt.hasNext()){
-                                        Node inOutNode  = (Node) inOutIt.next();
+                                        Node inOutNode  =  inOutIt.next();
                                         if(inOutNode instanceof Element){
-                                            Element inOutElement = (Element)inOutNode;
+                                            Element inOutElement = (Element) inOutNode;
+                                            String inOutName = inOutElement.getName();
+                                            //operation 元素构成不同
                                             String messageLabel = inOutElement.attributeValue("messageLabel");
+                                            if("".equals(messageLabel) || Objects.equals(messageLabel,null)){
+                                                messageLabel = inOutElement.attributeValue("message");
+                                            }
                                             String elementAttr = inOutElement.attributeValue("element");
+                                            if("".equals(elementAttr) || Objects.equals(elementAttr,null)){
+                                                elementAttr = inOutElement.attributeValue("name");
+                                            }
                                             elementAttr = spiltPrefix(elementAttr);
-                                            if(messageLabel.equals("In")){
+
+                                            if(messageLabel.equals("In") || inOutName.equals("input")){
                                                 inS.append(elementAttr).append(",");
-                                            }else if(messageLabel.equals("Out")){
+                                            }else if(messageLabel.equals("Out") || inOutName.equals("output")){
                                                 outS.append(elementAttr).append(",");
                                             }
                                         }
@@ -238,9 +263,13 @@ public class TransitionService {
                     }
                 }
             }
-            inS.deleteCharAt(inS.length()-1);
+            if(inS.length() > 1) {
+                inS.deleteCharAt(inS.length() - 1);
+            }
             inS.append(" -> ");
-            outS.deleteCharAt(outS.length()-1);
+            if(outS.length() > 1) {
+                outS.deleteCharAt(outS.length() - 1);
+            }
             ob.append(inS).append(outS).append("\n");
         }
         catch (Exception e){
@@ -271,30 +300,34 @@ public class TransitionService {
         // get var list
         for(String varl : varList){
             temp = varl.substring(0,varl.length()/2+1);
-            varString.append(temp+": "+varl+"; ");
+            temp = temp+": "+varl+"; ";
+            varString.append(temp);
         }
 
 
        //生成公理说明主体部分
         String subPortTypeName = portTypeName.substring(0,portTypeName.length()/2+1);
         //用于保存临时key\value值
-        String keyNext = new String();
-        String valueNext = new String();
+        String keyNext;
+        String valueNext;
             //{PlaceAndDate=pdrec, MaxMinTemp=mmtre, InDataFault=errmes} dataAndType Map序列
-            Set complexTypeSet = dataAndType.keySet();
-            Iterator keySetIt = complexTypeSet.iterator();
+            Set<String> complexTypeSet = dataAndType.keySet();
+            Iterator<String> keySetIt = complexTypeSet.iterator();
             //进行双重循环，围绕每一个key值进行迭代，构造公理
             while (keySetIt.hasNext()) {
-                Iterator tempIt = complexTypeSet.iterator();
-                keyNext = (String) keySetIt.next();
+                Iterator<String> tempIt = complexTypeSet.iterator();
+                keyNext =  keySetIt.next();
                 valueNext = dataAndType.get(keyNext);
                 while (tempIt.hasNext()) {
-                    String tempKey = (String)tempIt.next();
-                    axiomsMain.append(subPortTypeName + ".set_ " + keyNext + " (" + valueNext + ").get_" + "\n");
+                    String tempKey = tempIt.next();
+                    String subP = subPortTypeName + ".set_ " + keyNext + " (" + this.spiltPrefix(valueNext) + ").get_ ";
+                    axiomsMain.append(subP);
                     if(tempKey.equals(keyNext)) {
-                        axiomsMain.append(keyNext + " ="  + valueNext + "\n");
+                        String kvN = keyNext + " ="  + this.spiltPrefix(valueNext) + "\n";
+                        axiomsMain.append(kvN);
                     }else {
-                        axiomsMain.append(tempKey+" = "+subPortTypeName+". get_ "+tempKey+"\n");
+                        String tempK = tempKey+" = "+subPortTypeName+".get_ "+tempKey+"\n";
+                        axiomsMain.append(tempK);
                     }
                 }
             }

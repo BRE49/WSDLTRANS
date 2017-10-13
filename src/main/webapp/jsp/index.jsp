@@ -34,7 +34,7 @@
     <a id="transition" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-reload'">进行转换</a>
     &nbsp; &nbsp;
     <a id="clearWsdl" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-clear'">清空WSDL</a>
-    <input id="wsdl" type="text" multiline="true" class="easyui-textbox" style="width:100%;height:500px;">
+    <input id="wsdl" type="text" multiline="true" class="easyui-textbox" style="width:100%;height:580px;">
 </div>
 
 <div id="center" data-options="region:'center',title:'RADL-WS',disabled:true" style="padding:5px;">
@@ -42,49 +42,53 @@
 
 <script type="text/javascript">
 
-
-    $("#clearWsdl").click(function () {
-        $("#wsdl").textbox("setValue","");
-    });
-
-    $("#openWSDL").click(function () {
-        var filePath = $("#chooseWSDL").filebox('getValue');
-        var url = "/open?filePath="+filePath;
-        $.get(url,function (result) {
-            var status = result.code;
-            if(status === 0){
-                alert(result.info);
-            }else {
-                var wsdl = result.data;
-                $("#wsdl").textbox("setValue", wsdl);
-            }
+        $("#clearWsdl").click(function () {
+            $("#wsdl").textbox("setValue", "");
         });
-    });
 
-    $("#transition").click(function () {
-        var wsdl = $("#wsdl").val();
-        var url = "/trans";
-        var radl = $("#center");
-        var sendData = {'wsdl':wsdl};
-        $.post(url,sendData,function (backInfo) {
-            radl.text("");
-            radl.append(backInfo.data);
-        })
-    });
-
-    $("#ruleCheck").click(function () {
-        var wsdl = $("#wsdl").val();
-        var url = "/ruleCheck";
-        var sendData = {'wsdl':wsdl};
-        $.post(url,sendData,function (backInfo) {
-            var status = backInfo.code;
-            if(status === 1){
-                alert("语法验证通过");
-            }else {
-                alert(backInfo.info);
-            }
+        $("#openWSDL").click(function () {
+            var filePath = $("#chooseWSDL").filebox('getValue');
+            var url = "/open?filePath=" + filePath;
+            $.get(url, function (result) {
+                var status = result.code;
+                if (status === 0) {
+                    alert(result.info);
+                } else {
+                    var wsdl = result.data;
+                    $("#wsdl").textbox("setValue", wsdl);
+                }
+            });
         });
-    });
+
+        $("#transition").click(function () {
+            var wsdl = $("#wsdl").val();
+            var url = "/trans";
+            var radl = $("#center");
+            var sendData = {'wsdl': wsdl};
+            $.post(url, sendData, function (backInfo) {
+                radl.text("");
+                if (backInfo.code === 1) {
+                    alert(backInfo.info);
+                    radl.append(backInfo.data);
+                } else {
+                    alert(backInfo.info);
+                }
+            })
+        });
+
+        $("#ruleCheck").click(function () {
+            var wsdl = $("#wsdl").val();
+            var url = "/ruleCheck";
+            var sendData = {'wsdl': wsdl};
+            $.post(url, sendData, function (backInfo) {
+                var status = backInfo.code;
+                if (status === 1) {
+                    alert("语法检查通过");
+                } else {
+                    alert(backInfo.info);
+                }
+            });
+        });
 
 </script>
 </body>

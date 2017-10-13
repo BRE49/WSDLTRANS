@@ -25,7 +25,6 @@ public class RuleCheck {
     @RequestMapping(value = "/ruleCheck",method = RequestMethod.POST,produces = "application/json")
     public JsonResult ruleCheck(Wsdl wsdl) throws Exception{
         logger.info("ruleCheck------");
-        logger.info("wsdl is-----"+wsdl);
         return ruleCheckService.ruleCheck(wsdl.getContent());
     }
 }

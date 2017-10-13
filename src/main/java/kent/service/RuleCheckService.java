@@ -33,13 +33,13 @@ public class RuleCheckService {
         Element root = document.getRootElement();
         logger.info("root element is ------"+root.getName());
 
-        if(root.selectNodes("//types").size() == 0){
+        if(root.selectNodes("//types").size() == 0 && root.selectNodes("//wsdl:types").size()==0){
             return new ErrorResult("types 节点缺失");
-        }else if(root.selectNodes("//message").size() == 0){
+        }else if(root.selectNodes("//message").size() == 0 && root.selectNodes("//wsdl:message").size() == 0){
             return new ErrorResult("message 节点缺失");
-        }else if(root.selectNodes("//service").size() == 0){
+        }else if(root.selectNodes("//service").size() == 0 && root.selectNodes("//wsdl:service").size() == 0){
             return new ErrorResult("service 节点缺失");
-        }else if(root.selectNodes("//portType").size() == 0){
+        }else if(root.selectNodes("//portType").size() == 0 && root.selectNodes("//wsdl:portType").size() == 0){
             return new ErrorResult("portType 节点缺失");
         }
 

@@ -2,6 +2,7 @@ package kent.service;
 
 import kent.model.JsonResult;
 import kent.model.SuccessResult;
+import org.apache.log4j.Logger;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -17,6 +18,8 @@ import java.util.*;
 @Service
 public class TransitionServiceOnWeb {
 
+    //日志记录
+    protected Logger logger = Logger.getLogger(TransitionServiceOnWeb.class);
 
     //公理生成部分的变量列表
     private List<String> varList = new ArrayList<>();
@@ -39,7 +42,7 @@ public class TransitionServiceOnWeb {
             //System.out.println(text);
             SuccessResult result = new SuccessResult();
             result.setData(text.toString());
-            return result;
+            return result.setInfo("转换成功");
     }
 
     //去掉前缀 如 xs：string
@@ -52,6 +55,7 @@ public class TransitionServiceOnWeb {
         }
     }
 
+
     /**
      * 类型转换部分
      */
@@ -60,7 +64,11 @@ public class TransitionServiceOnWeb {
     private StringBuilder getComplexType(Element root){
         StringBuilder typeBuilder = new StringBuilder();
         List<?> list = root.selectNodes("//types//complexType");
+        if(list.size() == 0){
+            root.addNamespace("xs","http://www.w3.org/2001/XMLSchema");
+            list = root.selectNodes("//wsdl:types//xs:complexType");
 
+        }
         for (Object aList : list) {
 
             Element element = (Element) aList;
@@ -89,7 +97,7 @@ public class TransitionServiceOnWeb {
                 }
             }
         }
-        typeBuilder.append("end").append("<br/>");
+        typeBuilder.append("end").append("<br/>").append("<br/>");
         return typeBuilder;
     }
 
@@ -109,6 +117,11 @@ public class TransitionServiceOnWeb {
         //set complexTypeName to imports list
         specMain.append("imports: ");
         List list = root.selectNodes("//types//complexType");
+        if(list.size() == 0){
+            root.addNamespace("xs","http://www.w3.org/2001/XMLSchema");
+            list = root.selectNodes("//wsdl:types//xs:complexType");
+
+        }
         int i = 1;
         varList.add("message");
         for (Object aList : list){
@@ -120,9 +133,12 @@ public class TransitionServiceOnWeb {
         }
         //set messageName to imports list
         List list1 =  root.selectNodes("//message");
+        if(list1.size() == 0) list1 = root.selectNodes("//wsdl:message");
         for (Object bList : list1){
             Element element = (Element)bList;
             String messageName = element.attributeValue("name");
+            //拿到import列表 防止重复添加
+            if(Arrays.asList(specMain.toString().split(":")[1].substring(1).split(",")).contains(messageName)) continue;
             specMain.append(messageName).append(",");
         }
         //delete the last ,
@@ -134,7 +150,7 @@ public class TransitionServiceOnWeb {
         //operation tag
         StringBuilder inS = new StringBuilder();
         StringBuilder outS = new StringBuilder();
-
+        try{
             // 提取第一层的所有节点 只有标签节点definition
             Iterator it = doc.nodeIterator();
             while (it.hasNext()){
@@ -147,7 +163,7 @@ public class TransitionServiceOnWeb {
                     //找出type标签节点
                     if(typeNode instanceof Element){
                         String typeName = typeNode.getName();
-                        if(typeName.equals("types")){
+                        if(Objects.equals(typeName,"types")){
                             Element typeElement = (Element)typeNode;
                             //提取types的子节点 只有标签节点schema
                             Iterator eleIt = typeElement.nodeIterator();
@@ -166,6 +182,10 @@ public class TransitionServiceOnWeb {
                                             if(tagName.equals("element")){
                                                 String eleNameAttr = elementTag.attributeValue("name");
                                                 String eleTypeAttr = elementTag.attributeValue("type");
+
+                                                //remove prefix
+                                                eleNameAttr = this.spiltPrefix(eleNameAttr);
+                                                eleTypeAttr = this.spiltPrefix(eleTypeAttr);
                                                 dataAndType.put(eleNameAttr,eleTypeAttr);
                                                 trans.append("set_ ").append(eleNameAttr)
                                                         .append(": ").append(eleTypeAttr)
@@ -191,17 +211,26 @@ public class TransitionServiceOnWeb {
                                     //提取操作名 getMaxMinTemps
                                     String operationName = operationElement.attributeValue("name");
                                     ob.append(operationName).append(": ");
-                                    Iterator inOutIt = operationElement.nodeIterator();
+                                    Iterator<Node> inOutIt = operationElement.nodeIterator();
                                     while (inOutIt.hasNext()){
-                                        Node inOutNode  = (Node) inOutIt.next();
+                                        Node inOutNode  =  inOutIt.next();
                                         if(inOutNode instanceof Element){
-                                            Element inOutElement = (Element)inOutNode;
+                                            Element inOutElement = (Element) inOutNode;
+                                            String inOutName = inOutElement.getName();
+                                            //operation 元素构成不同
                                             String messageLabel = inOutElement.attributeValue("messageLabel");
+                                            if("".equals(messageLabel) || Objects.equals(messageLabel,null)){
+                                                messageLabel = inOutElement.attributeValue("message");
+                                            }
                                             String elementAttr = inOutElement.attributeValue("element");
+                                            if("".equals(elementAttr) || Objects.equals(elementAttr,null)){
+                                                elementAttr = inOutElement.attributeValue("name");
+                                            }
                                             elementAttr = spiltPrefix(elementAttr);
-                                            if(messageLabel.equals("In")){
+
+                                            if(messageLabel.equals("In") || inOutName.equals("input")){
                                                 inS.append(elementAttr).append(",");
-                                            }else if(messageLabel.equals("Out")){
+                                            }else if(messageLabel.equals("Out") || inOutName.equals("output")){
                                                 outS.append(elementAttr).append(",");
                                             }
                                         }
@@ -212,11 +241,19 @@ public class TransitionServiceOnWeb {
                     }
                 }
             }
-            inS.deleteCharAt(inS.length()-1);
+            if(inS.length() > 1) {
+                inS.deleteCharAt(inS.length() - 1);
+            }
             inS.append(" -> ");
-            outS.deleteCharAt(outS.length()-1);
+            if(outS.length() > 1) {
+                outS.deleteCharAt(outS.length() - 1);
+            }
             ob.append(inS).append(outS).append("<br/>");
-
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            throw new RuntimeException();
+        }
         specMain.append(trans).append(ob);
 
 
@@ -241,7 +278,8 @@ public class TransitionServiceOnWeb {
         // get var list
         for(String varl : varList){
             temp = varl.substring(0,varl.length()/2+1);
-            varString.append(temp).append(":").append(varl).append("; ");
+            temp = temp+": "+varl+"; ";
+            varString.append(temp);
         }
 
 
@@ -251,20 +289,23 @@ public class TransitionServiceOnWeb {
         String keyNext;
         String valueNext;
         //{PlaceAndDate=pdrec, MaxMinTemp=mmtre, InDataFault=errmes} dataAndType Map序列
-        Set complexTypeSet = dataAndType.keySet();
-        Iterator keySetIt = complexTypeSet.iterator();
+        Set<String> complexTypeSet = dataAndType.keySet();
+        Iterator<String> keySetIt = complexTypeSet.iterator();
         //进行双重循环，围绕每一个key值进行迭代，构造公理
         while (keySetIt.hasNext()) {
-            Iterator tempIt = complexTypeSet.iterator();
-            keyNext = (String) keySetIt.next();
+            Iterator<String> tempIt = complexTypeSet.iterator();
+            keyNext =  keySetIt.next();
             valueNext = dataAndType.get(keyNext);
             while (tempIt.hasNext()) {
-                String tempKey = (String)tempIt.next();
-                axiomsMain.append(subPortTypeName + ".set_ " + keyNext + " (" + valueNext + ").get_");
+                String tempKey = tempIt.next();
+                String subP = subPortTypeName + ".set_ " + keyNext + " (" + this.spiltPrefix(valueNext) + ").get_ ";
+                axiomsMain.append(subP);
                 if(tempKey.equals(keyNext)) {
-                    axiomsMain.append(keyNext + " ="  + valueNext + "<br/>");
+                    String kvN = keyNext + " ="  + this.spiltPrefix(valueNext) + "<br/>";
+                    axiomsMain.append(kvN);
                 }else {
-                    axiomsMain.append(tempKey+" = "+subPortTypeName+". get_ "+tempKey+"<br/>");
+                    String tempK = tempKey+" = "+subPortTypeName+".get_ "+tempKey+"<br/>";
+                    axiomsMain.append(tempK);
                 }
             }
         }
@@ -273,7 +314,6 @@ public class TransitionServiceOnWeb {
         axioms.append("end-spec");
         return axioms;
     }
-
 
 
 

@@ -1,11 +1,16 @@
 package kent.action;
 
 import kent.model.JsonResult;
+import kent.model.SuccessResult;
 import kent.service.WsdlReadService;
 import org.apache.log4j.Logger;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 
 /**
@@ -25,5 +30,6 @@ public class WsdlRead {
         logger.info("open controller");
         return readService.openFile(filePath);
     }
+
 
 }
