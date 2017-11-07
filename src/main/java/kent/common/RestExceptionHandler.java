@@ -20,6 +20,6 @@ public class RestExceptionHandler {
     public JsonResult nullPointer(Exception n){
         String errMsg = n.getMessage();
         logger.error(errMsg);
-        return  new ErrorResult(errMsg);
+        return  new ErrorResult("转换出错:"+errMsg);
     }
 }

@@ -34,6 +34,8 @@
     <a id="transition" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-reload'">进行转换</a>
     &nbsp; &nbsp;
     <a id="clearWsdl" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-clear'">清空WSDL</a>
+    &nbsp; &nbsp;
+    <a id="clearRadl" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-clear'">清空Radl-WS</a>
     <input id="wsdl" type="text" multiline="true" class="easyui-textbox" style="width:100%;height:580px;">
 </div>
 
@@ -41,6 +43,10 @@
 </div>
 
 <script type="text/javascript">
+        $("#clearRadl").click(function () {
+            var radl = $("#center");
+            radl.empty();
+        });
 
         $("#clearWsdl").click(function () {
             $("#wsdl").textbox("setValue", "");

@@ -18,9 +18,9 @@ import java.util.*;
 public class TransitionServiceOnWeb {
 
     //公理生成部分的变量列表
-    private List<String> varList = new ArrayList<>();
+    private List<String> varList;
     //数据名称及其复杂类型映射
-    private Map<String,String> dataAndType = new LinkedHashMap<>();
+    private Map<String,String> dataAndType;
     //存储端口类型名
     private String portTypeName = "";
 
@@ -32,6 +32,10 @@ public class TransitionServiceOnWeb {
             InputStream wsdlStream = new ByteArrayInputStream(inputWsdl.getBytes("UTF-8"));
             Document document = saxReader.read(wsdlStream);
             Element root = document.getRootElement();
+
+            //初始化全局变量
+            varList = new ArrayList<>();
+            dataAndType = new LinkedHashMap<>();
             text.append(getComplexType(root));
             text.append(getSpecMain(root,document));
             text.append(getAxioms());
@@ -43,6 +47,7 @@ public class TransitionServiceOnWeb {
 
     //去掉前缀 如 xs：string
     private String spiltPrefix(String a){
+        if("null".equals(a) || a == null) return "";
         if(a.contains(":")){
             String[] b = a.split(":");
             return b[1];
@@ -285,7 +290,7 @@ public class TransitionServiceOnWeb {
                 String subP = subPortTypeName + ".set_ " + k + " (" + this.spiltPrefix(dataAndType.get(k)) + ").get_ ";
                 axiomsMain.append(subP);
                 if (i.equals(k)) {
-                    String kvN = k + " =" + this.spiltPrefix(dataAndType.get(k)) + "<br/>";
+                    String kvN = k + " = " + this.spiltPrefix(dataAndType.get(k)) + "<br/>";
                     axiomsMain.append(kvN);
                 } else {
                     String tempK = i + " = " + subPortTypeName + ".get_ " + i + "<br/>";
