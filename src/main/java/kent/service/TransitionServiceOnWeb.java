@@ -72,7 +72,7 @@ public class TransitionServiceOnWeb {
             Element element = (Element) l;
             // get the record type
             String complexTypeName = element.attributeValue("name");
-            typeBuilder.append("type ").append(complexTypeName).append("=record").append("<br/>");
+            typeBuilder.append("type ").append(complexTypeName).append("=record").append("\n");
             //get the normal type
             Iterator<?> sequenceIterator = element.nodeIterator();
             sequenceIterator.forEachRemaining(s->{
@@ -85,13 +85,13 @@ public class TransitionServiceOnWeb {
                             String normalName = elem.attributeValue("name");
                             String normalType = elem.attributeValue("type");
                             String afterNormalType = spiltPrefix(normalType);
-                            typeBuilder.append(normalName).append(": ").append(afterNormalType).append(";").append("<br/>");
+                            typeBuilder.append(normalName).append(": ").append(afterNormalType).append(";").append("\n");
                         }
                     });
                 }
             });
         });
-        typeBuilder.append("end").append("<br/>").append("<br/>");
+        typeBuilder.append("end").append("\n").append("\n");
         return typeBuilder;
     }
 
@@ -104,7 +104,7 @@ public class TransitionServiceOnWeb {
         // service 名 转换为 Spec 名
         StringBuilder specMain = new StringBuilder("Spec ");
         String specName = root.element("service").attributeValue("name");
-        specMain.append(specName).append("<br/>");
+        specMain.append(specName).append("\n");
 
         //类型转换构建imports列表
         //set complexTypeName to imports list
@@ -137,11 +137,11 @@ public class TransitionServiceOnWeb {
             specMain.append(messageName).append(",");
         });
         //delete the last ,
-        specMain.deleteCharAt(specMain.length()-1).append("<br/>").append("ops:").append("<br/>");
+        specMain.deleteCharAt(specMain.length()-1).append("\n").append("ops:").append("\n");
 
         //transformer 和 observer 的转换与构建
-        StringBuilder trans = new StringBuilder("transformer:").append("<br/>");
-        StringBuilder ob = new StringBuilder("observer:").append("<br/>");
+        StringBuilder trans = new StringBuilder("transformer:").append("\n");
+        StringBuilder ob = new StringBuilder("observer:").append("\n");
         //operation tag
         StringBuilder inS = new StringBuilder();
         StringBuilder outS = new StringBuilder();
@@ -184,9 +184,9 @@ public class TransitionServiceOnWeb {
                                                 dataAndType.put(eleNameAttr,eleTypeAttr);
                                                 trans.append("set_ ").append(eleNameAttr)
                                                         .append(": ").append(eleTypeAttr)
-                                                        .append(" ->VOID").append("<br/>");
+                                                        .append(" ->VOID").append("\n");
                                                 ob.append("get_ ").append(eleNameAttr)
-                                                        .append(": VOID -> ").append(eleTypeAttr).append("<br/>");
+                                                        .append(": VOID -> ").append(eleTypeAttr).append("\n");
                                             }
                                         }
                                     }
@@ -243,7 +243,7 @@ public class TransitionServiceOnWeb {
             if(outS.length() > 1) {
                 outS.deleteCharAt(outS.length() - 1);
             }
-            ob.append(inS).append(outS).append("<br/>");
+            ob.append(inS).append(outS).append("\n");
         }
         catch (Exception e){
             e.printStackTrace();
@@ -266,7 +266,7 @@ public class TransitionServiceOnWeb {
         StringBuilder varString = new StringBuilder();
         //公理主体部分
         StringBuilder axiomsMain = new StringBuilder();
-        axioms.append("<br/>").append("axioms: ").append("<br/>");
+        axioms.append("\n").append("axioms: ").append("\n");
         //处理变量列表中的元素，取一半长度的字符串
 
         varString.append("var ");
@@ -290,15 +290,15 @@ public class TransitionServiceOnWeb {
                 String subP = subPortTypeName + ".set_ " + k + " (" + this.spiltPrefix(dataAndType.get(k)) + ").get_ ";
                 axiomsMain.append(subP);
                 if (i.equals(k)) {
-                    String kvN = k + " = " + this.spiltPrefix(dataAndType.get(k)) + "<br/>";
+                    String kvN = k + " = " + this.spiltPrefix(dataAndType.get(k)) + "\n";
                     axiomsMain.append(kvN);
                 } else {
-                    String tempK = i + " = " + subPortTypeName + ".get_ " + i + "<br/>";
+                    String tempK = i + " = " + subPortTypeName + ".get_ " + i + "\n";
                     axiomsMain.append(tempK);
                 }
             });
         });
-        axioms.append(varString).append("<br/>");
+        axioms.append(varString).append("\n");
         axioms.append(axiomsMain);
         axioms.append("end-spec");
         return axioms;

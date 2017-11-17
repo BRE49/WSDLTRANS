@@ -36,10 +36,15 @@
     <a id="clearWsdl" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-clear'">清空WSDL</a>
     &nbsp; &nbsp;
     <a id="clearRadl" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-clear'">清空Radl-WS</a>
-    <input id="wsdl" type="text" multiline="true" class="easyui-textbox" style="width:100%;height:580px;">
+    <input id="wsdl" type="text" multiline="true" class="easyui-textbox" style="width:100%;height:650px;">
 </div>
 
 <div id="center" data-options="region:'center',title:'RADL-WS',disabled:true" style="padding:5px;">
+    <a id="bigger" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'">字体增大</a>
+    &nbsp; &nbsp;
+    <a id="smaller" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove'">字体缩小</a>
+    &nbsp; &nbsp;
+    <input id="radl" type="text" multiline="true" class="easyui-textbox" style="width:100%;height:650px;">
 </div>
 
 <script type="text/javascript">
@@ -69,13 +74,13 @@
         $("#transition").click(function () {
             var wsdl = $("#wsdl").val();
             var url = "/trans";
-            var radl = $("#center");
+            var radl = $("#radl");
             var sendData = {'wsdl': wsdl};
             $.post(url, sendData, function (backInfo) {
                 radl.text("");
                 if (backInfo.code === 1) {
                     alert(backInfo.info);
-                    radl.append(backInfo.data);
+                    radl.textbox("setValue",backInfo.data);
                 } else {
                     alert(backInfo.info);
                 }
@@ -95,6 +100,20 @@
                 }
             });
         });
+
+        $("#bigger").click(function () {
+            var radl = $("#radl").textbox("textbox");
+            var size = parseInt(radl.css("font-size"));
+            size++;
+            radl.css("font-size",size+"px");
+        });
+
+        $("#smaller").click(function () {
+            var radl = $("#radl").textbox("textbox");
+            var size = parseInt(radl.css("font-size"));
+            size--;
+            radl.css("font-size",size+"px");
+        })
 
 </script>
 </body>
