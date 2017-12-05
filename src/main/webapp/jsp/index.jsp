@@ -35,8 +35,7 @@
     &nbsp; &nbsp;
     <a id="clearWsdl" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-clear'">清空WSDL</a>
     &nbsp; &nbsp;
-    <a id="clearRadl" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-clear'">清空Radl-WS</a>
-    <input id="wsdl" type="text" multiline="true" class="easyui-textbox" style="width:100%;height:650px;">
+    <input id="wsdl" type="text" multiline="true" class="easyui-textbox" style="width:100%;height:600px;">
 </div>
 
 <div id="center" data-options="region:'center',title:'RADL-WS',disabled:true" style="padding:5px;">

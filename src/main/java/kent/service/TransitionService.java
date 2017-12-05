@@ -6,6 +6,7 @@ import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 import org.junit.Test;
 
+import javax.xml.ws.Endpoint;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -30,9 +31,9 @@ public class TransitionService {
             SAXReader saxReader = new SAXReader();
             Document document = saxReader.read(wsdl);
             Element root = document.getRootElement();
-            text.append(getComplexType(root));
+            //text.append(getComplexType(root));
             text.append(getSpecMain(root,document));
-            text.append(getAxioms());
+            //text.append(getAxioms());
             //System.out.println(dataAndType.toString());
             System.out.println(text);
             //account 15130489532
@@ -61,6 +62,11 @@ public class TransitionService {
         }
     }
 
+    //imports列表防止重复添加
+    private boolean containsString(StringBuilder s,String a){
+        return Arrays.asList(s.toString().split(":")[1].substring(1).split(","))
+                .contains(a);
+    }
 
     //将文件转换为字符串
     @SuppressWarnings("unused")
@@ -148,8 +154,28 @@ public class TransitionService {
         varList.add("message");
         for (Object aList : list){
             Element element = (Element) aList;
+            //基本类型查找
+            Iterator sequenceIt = element.nodeIterator();
+            while (sequenceIt.hasNext()){
+                Node sequenceNode = (Node) sequenceIt.next();
+                if(sequenceNode instanceof Element) {
+                    Element sequenceEle = (Element)sequenceNode;
+                    Iterator xsIt = sequenceEle.nodeIterator();
+                    while (xsIt.hasNext()) {
+                        Node xsNode = (Node) xsIt.next();
+                        if(xsNode instanceof Element) {
+                            Element xsEle = (Element) xsNode;
+                            String basicTypeName = xsEle.attributeValue("type");
+                            basicTypeName = spiltPrefix(basicTypeName);
+                            if(containsString(specMain,basicTypeName)) continue;
+                            specMain.append(basicTypeName).append(",");
+                        }
+                    }
+                }
+            }
             String complexTypeName = element.attributeValue("name");
-            specMain.append(complexTypeName).append(",");
+            if(!containsString(specMain,complexTypeName))
+                specMain.append(complexTypeName).append(",");
             //复杂类型添加到变量列表中
             varList.add(i++,complexTypeName);
         }
@@ -160,7 +186,7 @@ public class TransitionService {
             Element element = (Element)bList;
             String messageName = element.attributeValue("name");
             //拿到import列表 防止重复添加
-            if(Arrays.asList(specMain.toString().split(":")[1].substring(1).split(",")).contains(messageName)) continue;
+            if(containsString(specMain,messageName)) continue;
             specMain.append(messageName).append(",");
         }
         //delete the last ,

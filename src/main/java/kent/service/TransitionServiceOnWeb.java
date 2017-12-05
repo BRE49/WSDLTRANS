@@ -45,6 +45,11 @@ public class TransitionServiceOnWeb {
             return result.setInfo("转换成功");
     }
 
+    /**
+     *
+     * tools 工具部分
+     */
+
     //去掉前缀 如 xs：string
     private String spiltPrefix(String a){
         if("null".equals(a) || a == null) return "";
@@ -54,6 +59,12 @@ public class TransitionServiceOnWeb {
         }else{
             return a;
         }
+    }
+
+    //imports列表防止重复添加
+    private boolean containsString(StringBuilder s,String a){
+        return Arrays.asList(s.toString().split(":")[1].substring(1).split(","))
+                .contains(a);
     }
 
 
@@ -121,8 +132,25 @@ public class TransitionServiceOnWeb {
         list.forEach(l->{
             int index = 0;
             Element element = (Element) l;
+            Iterator<?> sequenceIt = element.nodeIterator();
+            sequenceIt.forEachRemaining(sequenceNode -> {
+                if(sequenceNode instanceof Element){
+                    Element sequenceEle = (Element)sequenceNode;
+                    Iterator<?> xsIt = sequenceEle.nodeIterator();
+                    xsIt.forEachRemaining(xsNode ->{
+                        if(xsNode instanceof Element){
+                            Element xsEle = (Element)xsNode;
+                            String basicTypeName = xsEle.attributeValue("type");
+                            basicTypeName = spiltPrefix(basicTypeName);
+                            if(!containsString(specMain,basicTypeName))
+                                specMain.append(basicTypeName).append(",");
+                        }
+                    });
+                }
+            });
             String complexTypeName = element.attributeValue("name");
-            specMain.append(complexTypeName).append(",");
+            if(!containsString(specMain,complexTypeName))
+                specMain.append(complexTypeName).append(",");
             //复杂类型添加到变量列表中
             varList.add(++index,complexTypeName);
         });
@@ -133,7 +161,7 @@ public class TransitionServiceOnWeb {
             Element element = (Element) l;
             String messageName = element.attributeValue("name");
             //拿到import列表 防止重复添加
-            if(!(Arrays.asList(specMain.toString().split(":")[1].substring(1).split(",")).contains(messageName)))
+            if(!containsString(specMain,messageName))
             specMain.append(messageName).append(",");
         });
         //delete the last ,
@@ -145,7 +173,7 @@ public class TransitionServiceOnWeb {
         //operation tag
         StringBuilder inS = new StringBuilder();
         StringBuilder outS = new StringBuilder();
-        try{
+
             // 提取第一层的所有节点 只有标签节点definition
             Iterator it = doc.nodeIterator();
             while (it.hasNext()){
@@ -204,8 +232,8 @@ public class TransitionServiceOnWeb {
                                 if(operationNode instanceof Element){
                                     Element operationElement = (Element)operationNode;
                                     //提取操作名 getMaxMinTemps
-                                    String operationName = operationElement.attributeValue("name");
-                                    ob.append(operationName).append(": ");
+                                    /*String operationName = operationElement.attributeValue("name");
+                                    ob.append(operationName).append(": ");*/
                                     Iterator<?> inOutIt = operationElement.nodeIterator();
                                     while (inOutIt.hasNext()){
                                         Node inOutNode  =  (Node) inOutIt.next();
@@ -243,12 +271,8 @@ public class TransitionServiceOnWeb {
             if(outS.length() > 1) {
                 outS.deleteCharAt(outS.length() - 1);
             }
-            ob.append(inS).append(outS).append("\n");
-        }
-        catch (Exception e){
-            e.printStackTrace();
-            throw new RuntimeException();
-        }
+            ob.append("\n").append(inS).append(outS).append("\n");
+
         specMain.append(trans).append(ob);
 
 
