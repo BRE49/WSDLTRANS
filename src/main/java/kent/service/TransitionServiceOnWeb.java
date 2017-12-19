@@ -175,7 +175,7 @@ public class TransitionServiceOnWeb {
         StringBuilder outS = new StringBuilder();
 
             // 提取第一层的所有节点 只有标签节点definition
-            Iterator it = doc.nodeIterator();
+            Iterator<?> it = doc.nodeIterator();
             while (it.hasNext()){
                 //转换成标签节点 element
                 Element def = (Element) it.next();

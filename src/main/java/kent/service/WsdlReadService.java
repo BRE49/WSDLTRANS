@@ -19,12 +19,9 @@ public class WsdlReadService{
 
     public JsonResult openFile(String filePath) throws IOException{
 
-        SuccessResult result = new SuccessResult();
-        //处理filePath
-        if(filePath.contains("fakepath")){
-            filePath = filePath.substring(11);
-            filePath = "F:\\Final\\project"+filePath;
-        }
+        JsonResult result = new SuccessResult();
+        //本地路径处理方式  部署到服务器上时，需要文件上传到服务器上
+        filePath = "F:\\Final\\project\\FileSaver\\"+filePath;
         //获取文件路径后打印到log
         logger.info("the file path is --------"+filePath);
         File file = new File(filePath);

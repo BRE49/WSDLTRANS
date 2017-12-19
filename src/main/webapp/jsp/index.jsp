@@ -25,7 +25,9 @@
      data-options="region:'west',title:'WSDL',split:true,disabled:true,collapsible:false"
      style="width:700px;">
     &nbsp; &nbsp;
-    <input id="chooseWSDL" class="easyui-filebox" style="width:130px" data-options="buttonText:'选择WSDL文件'">
+    <form id="ff" enctype="multipart/form-data" style="margin: 0;display: inline">
+    <input id="chooseWSDL" name="file" class="easyui-filebox" style="width:160px" data-options="buttonText:'选择WSDL文件'" title="file">
+    </form>
     &nbsp; &nbsp;
     <a id="openWSDL" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'">打开文件</a>
     &nbsp; &nbsp;
@@ -55,19 +57,31 @@
         $("#clearWsdl").click(function () {
             $("#wsdl").textbox("setValue", "");
         });
-
         $("#openWSDL").click(function () {
-            var filePath = $("#chooseWSDL").filebox('getValue');
-            var url = "/open?filePath=" + filePath;
-            $.get(url, function (result) {
-                var status = result.code;
-                if (status === 0) {
-                    alert(result.info);
-                } else {
-                    var wsdl = result.data;
-                    $("#wsdl").textbox("setValue", wsdl);
+            var form = new FormData(document.getElementById("ff"));
+
+            $.ajax({
+                url:"/fileUpload",
+                type:"post",
+                data:form,
+                processData:false,
+                contentType:false,
+                success:function(backInfo){
+                    var fileName = backInfo.info;
+                    var url = "/open?filePath=" + fileName;
+                    $.get(url, function (result) {
+                        var status = result.code;
+                        if (status === 0) {
+                            alert(result.info);
+                        } else {
+                            var wsdl = result.data;
+                            $("#wsdl").textbox("setValue", wsdl);
+                        }
+                    });
                 }
             });
+
+
         });
 
         $("#transition").click(function () {

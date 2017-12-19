@@ -198,9 +198,8 @@ public class TransitionService {
         //operation tag
         StringBuilder inS = new StringBuilder();
         StringBuilder outS = new StringBuilder();
-        try{
             // 提取第一层的所有节点 只有标签节点definition
-            Iterator it = doc.nodeIterator();
+            Iterator<?> it = doc.nodeIterator();
             while (it.hasNext()){
                 //转换成标签节点 element
                 Element def = (Element) it.next();
@@ -297,11 +296,6 @@ public class TransitionService {
                 outS.deleteCharAt(outS.length() - 1);
             }
             ob.append(inS).append(outS).append("\n");
-        }
-        catch (Exception e){
-            e.printStackTrace();
-            throw new RuntimeException();
-        }
         specMain.append(trans).append(ob);
 
 

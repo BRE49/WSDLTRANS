@@ -14,6 +14,13 @@
     <context:component-scan base-package="kent.service"/>
     <context:component-scan base-package="kent.action"/>
 
+    <!-- file upload-->
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="104857600" />
+        <property name="maxInMemorySize" value="4096" />
+        <property name="defaultEncoding" value="UTF-8"/>
+    </bean>
+
     <!-- Exception Handler -->
     <context:component-scan base-package="kent" use-default-filters="false">
         <context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.RestController"/>
