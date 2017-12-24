@@ -1,3 +1,4 @@
+import kent.util.Const;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.Element;
@@ -136,4 +137,12 @@ public class test1 {
         System.out.println(m);
         System.out.println(calendar.get(Calendar.MONTH)+1);
     }
+
+    @Test
+    public void testString(){
+        String a = "imports: sayHello,";
+        System.out.println(a.substring(9));
+        System.out.println(Const.WEBPATH);
+    }
+
 }

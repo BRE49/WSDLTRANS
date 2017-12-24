@@ -26,10 +26,13 @@
      style="width:700px;">
     &nbsp; &nbsp;
     <form id="ff" enctype="multipart/form-data" style="margin: 0;display: inline">
-    <input id="chooseWSDL" name="file" class="easyui-filebox" style="width:160px" data-options="buttonText:'选择WSDL文件'" title="file">
+    <input id="chooseWSDL" name="file" class="easyui-filebox" style="width:120px" data-options="buttonText:'选择文件'" title="file">
     </form>
     &nbsp; &nbsp;
-    <a id="openWSDL" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'">打开文件</a>
+    <a id="openWSDL" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add'">上传并打开</a>
+    &nbsp; &nbsp;
+    <a id="cloud" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-cloud'">云文件</a>
+    <button id="openCloudFile" style="display: none">打开云文件</button>
     &nbsp; &nbsp;
     <a id="ruleCheck" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search'">语法检查</a>
     &nbsp; &nbsp;
@@ -37,6 +40,7 @@
     &nbsp; &nbsp;
     <a id="clearWsdl" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-clear'">清空WSDL</a>
     &nbsp; &nbsp;
+    <div id="dialog"></div>
     <input id="wsdl" type="text" multiline="true" class="easyui-textbox" style="width:100%;height:600px;">
 </div>
 
@@ -126,8 +130,38 @@
             var size = parseInt(radl.css("font-size"));
             size--;
             radl.css("font-size",size+"px");
-        })
+        });
+        
+    //cloud files
+        $("#cloud").click(function () {
+            var dialog = $("#dialog");
+            dialog.dialog({
+                title: 'Cloud Files',
+                width: 400,
+                height: 200,
+                modal: true
+            });
 
+            dialog.dialog('refresh',"cloud.jsp");
+        });
+
+        var openCloudFile = $("#openCloudFile");
+        openCloudFile.bind("clickOnce",function () {
+            var fileName = window.location.search.substring(1);
+            if(fileName !== ""){
+                var url = "/open?filePath=" + fileName;
+                $.get(url, function (result) {
+                    var status = result.code;
+                    if (status === 0) {
+                        alert(result.info);
+                    } else {
+                        var wsdl = result.data;
+                        $("#wsdl").textbox("setValue", wsdl);
+                    }
+                });
+            }
+        });
+        openCloudFile.trigger("clickOnce");
 </script>
 </body>
 

@@ -3,9 +3,11 @@ package kent.service;
 import kent.model.ErrorResult;
 import kent.model.JsonResult;
 import kent.model.SuccessResult;
+import kent.util.Const;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.*;
 
 /**
@@ -17,14 +19,12 @@ public class WsdlReadService{
 
     private Logger logger = Logger.getLogger(WsdlReadService.class);
 
-    public JsonResult openFile(String filePath) throws IOException{
+    public JsonResult openFile(String fileName) throws IOException{
 
         JsonResult result = new SuccessResult();
-        //本地路径处理方式  部署到服务器上时，需要文件上传到服务器上
-        filePath = "F:\\Final\\project\\FileSaver\\"+filePath;
         //获取文件路径后打印到log
-        logger.info("the file path is --------"+filePath);
-        File file = new File(filePath);
+        logger.info("the file path is --------"+fileName);
+        File file = new File(Const.WEBPATH + fileName);
         if(!file.exists()) {
             return new ErrorResult("file not exist");
         }else if (!file.canRead()){

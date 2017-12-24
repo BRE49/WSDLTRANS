@@ -7,6 +7,8 @@
     <groupId>kent</groupId>
     <artifactId>WSDL2RADL</artifactId>
     <version>1.0-SNAPSHOT</version>
+    <packaging>war</packaging>
+    <name>WSDL-transfer</name>
 
     <properties>
         <org.springframework.version>4.3.3.RELEASE</org.springframework.version>

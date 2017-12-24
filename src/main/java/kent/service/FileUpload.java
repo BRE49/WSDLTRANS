@@ -3,6 +3,7 @@ package kent.service;
 import kent.model.ErrorResult;
 import kent.model.JsonResult;
 import kent.model.SuccessResult;
+import kent.util.Const;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -32,10 +33,12 @@ public class FileUpload {
                 MultipartFile multipartFile = servletRequest.getFile(file);
                 if(multipartFile != null){
                     String fileName = multipartFile.getOriginalFilename();
-                    //本地处理方法 服务器需要另设路径
-                    String path = "F:\\Final\\project\\FileSaver\\"+ fileName;
                     try {
-                        multipartFile.transferTo(new File(path));
+                        File wsdl = new File(Const.WEBPATH + fileName);
+                        //创建云存储文件夹
+                        if(!wsdl.getParentFile().exists())
+                            wsdl.getParentFile().mkdirs();
+                        multipartFile.transferTo(wsdl);
                         result.setInfo(fileName);
                     }catch (IOException e){
                         e.printStackTrace();
