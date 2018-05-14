@@ -22,11 +22,12 @@
     </bean>
 
     <!-- Exception Handler -->
+    <!--
     <context:component-scan base-package="kent" use-default-filters="false">
         <context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.RestController"/>
         <context:include-filter type="annotation" expression="org.springframework.web.bind.annotation.RestControllerAdvice"/>
     </context:component-scan>
-
+    -->
     <!-- Standard xml based mvc config-->
     <mvc:annotation-driven>
         <mvc:message-converters>

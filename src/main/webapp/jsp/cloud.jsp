@@ -21,8 +21,9 @@
                     var fileName = files["data"][i];
                     var fileNameLink = document.createElement("a");
                     fileNameLink.innerHTML = fileName;
-                    fileNameLink.setAttribute("href","index.jsp?"+fileName);
-                    $("#list").append(fileNameLink,"<br/>");
+                    fileNameLink.setAttribute("href","/jsp/index.jsp?"+fileName);
+                    fileNameLink.setAttribute("style","font-size:20px");
+                    $("#list").append("&nbsp;&nbsp;",fileNameLink,"<br/>");
                 }
             }
         });
